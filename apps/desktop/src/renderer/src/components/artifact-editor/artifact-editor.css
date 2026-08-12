@@ -1,0 +1,327 @@
+/* ─── Artifact editor ProseMirror styles ──────────────────────────────────── */
+/* Minimal styling that matches the Braid design token system.             */
+/* No default ProseMirror styles — everything is custom.                     */
+
+.artifact-editor-content {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-fg);
+  padding: 12px 16px;
+  min-height: 80px;
+}
+
+.artifact-editor-content:focus {
+  outline: none;
+}
+
+/* Headings */
+.artifact-editor-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  color: var(--color-fg);
+}
+
+.artifact-editor-content h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 6px;
+  color: var(--color-fg);
+}
+
+.artifact-editor-content h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  color: var(--color-fg);
+}
+
+.artifact-editor-content h1:first-child,
+.artifact-editor-content h2:first-child,
+.artifact-editor-content h3:first-child {
+  margin-top: 0;
+}
+
+/* Paragraphs */
+.artifact-editor-content p {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.artifact-editor-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Bold, italic */
+.artifact-editor-content strong {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.artifact-editor-content em {
+  font-style: italic;
+}
+
+/* Inline code */
+.artifact-editor-content code {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+  font-size: 12px;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* Code blocks */
+.artifact-editor-content pre {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  overflow-x: auto;
+}
+
+.artifact-editor-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Syntax highlighting (lowlight / highlight.js classes) */
+.artifact-editor-content pre code .hljs-keyword,
+.artifact-editor-content pre code .hljs-selector-tag,
+.artifact-editor-content pre code .hljs-built_in,
+.artifact-editor-content pre code .hljs-type { color: #c678dd; }
+
+.artifact-editor-content pre code .hljs-string,
+.artifact-editor-content pre code .hljs-attr,
+.artifact-editor-content pre code .hljs-template-tag,
+.artifact-editor-content pre code .hljs-template-variable { color: #98c379; }
+
+.artifact-editor-content pre code .hljs-number,
+.artifact-editor-content pre code .hljs-literal { color: #d19a66; }
+
+.artifact-editor-content pre code .hljs-comment,
+.artifact-editor-content pre code .hljs-doctag { color: #5c6370; font-style: italic; }
+
+.artifact-editor-content pre code .hljs-function,
+.artifact-editor-content pre code .hljs-title { color: #61afef; }
+
+.artifact-editor-content pre code .hljs-variable,
+.artifact-editor-content pre code .hljs-params { color: #e06c75; }
+
+.artifact-editor-content pre code .hljs-meta { color: #56b6c2; }
+
+.artifact-editor-content pre code .hljs-regexp { color: #98c379; }
+
+.artifact-editor-content pre code .hljs-tag { color: #e06c75; }
+
+.artifact-editor-content pre code .hljs-name { color: #e06c75; }
+
+.artifact-editor-content pre code .hljs-selector-id,
+.artifact-editor-content pre code .hljs-selector-class { color: #d19a66; }
+
+.artifact-editor-content pre code .hljs-symbol,
+.artifact-editor-content pre code .hljs-bullet { color: #61afef; }
+
+.artifact-editor-content pre code .hljs-link { color: #56b6c2; text-decoration: underline; }
+
+.artifact-editor-content pre code .hljs-addition { color: #98c379; background: rgba(152, 195, 121, 0.1); }
+
+.artifact-editor-content pre code .hljs-deletion { color: #e06c75; background: rgba(224, 108, 117, 0.1); }
+
+/* Lists */
+.artifact-editor-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.artifact-editor-content ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.artifact-editor-content li {
+  margin: 2px 0;
+}
+
+.artifact-editor-content li > ul,
+.artifact-editor-content li > ol {
+  margin: 0;
+}
+
+/* Task lists */
+.artifact-editor-content ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.artifact-editor-content ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.artifact-editor-content ul[data-type="taskList"] li input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--color-brand);
+}
+
+/* Blockquote */
+.artifact-editor-content blockquote {
+  border-left: 3px solid var(--color-border-strong);
+  padding-left: 12px;
+  margin: 8px 0;
+  color: var(--color-fg-secondary);
+}
+
+/* Horizontal rule */
+.artifact-editor-content hr {
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+  margin: 16px 0;
+}
+
+/* Links */
+.artifact-editor-content a {
+  color: var(--color-brand);
+  text-decoration: none;
+}
+
+.artifact-editor-content a:hover {
+  text-decoration: underline;
+}
+
+/* Images */
+.artifact-editor-content img {
+  max-width: 60%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+/* Tables */
+.artifact-editor-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.artifact-editor-content th,
+.artifact-editor-content td {
+  border: 1px solid var(--color-border-subtle);
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 12px;
+}
+
+.artifact-editor-content th {
+  background: var(--color-surface-secondary);
+  font-weight: 600;
+  color: var(--color-fg-secondary);
+}
+
+/* Strikethrough */
+.artifact-editor-content s {
+  text-decoration: line-through;
+  color: var(--color-fg-tertiary);
+}
+
+/* HTML block wrapper */
+.html-block-wrapper {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+  background: var(--color-surface-secondary);
+  position: relative;
+}
+
+.html-block-wrapper::before {
+  content: 'HTML';
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 10px;
+  color: var(--color-fg-tertiary);
+  font-weight: 500;
+}
+
+/* Pending comment highlight — shown while user is typing a new comment */
+.pending-comment-highlight {
+  background: rgba(234, 179, 8, 0.3);
+  border-radius: 2px;
+}
+
+/* ProseMirror placeholder */
+.artifact-editor-content .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-fg-tertiary);
+  pointer-events: none;
+  height: 0;
+}
+
+/* ─── Search highlights ──────────────────────────────────────────────────── */
+
+.search-match {
+  background: rgba(234, 179, 8, 0.25);
+  border-radius: 2px;
+}
+
+.search-match-active {
+  background: rgba(234, 179, 8, 0.6);
+  border-radius: 2px;
+}
+
+/* ─── Comment highlights ──────────────────────────────────────────────────── */
+
+.comment-highlight {
+  border-bottom: 2px solid rgba(234, 179, 8, 0.7);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.comment-highlight:hover {
+  border-bottom-color: rgba(234, 179, 8, 1);
+}
+
+.comment-highlight-outdated {
+  border-bottom: 2px dashed rgba(150, 150, 150, 0.4);
+  cursor: pointer;
+}
+
+/* Collaboration cursors */
+.collaboration-cursor__caret {
+  border-left: 2px solid;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+
+.collaboration-cursor__label {
+  font-size: 10px;
+  font-weight: 500;
+  position: absolute;
+  top: -18px;
+  left: -1px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  color: #fff;
+  user-select: none;
+  pointer-events: none;
+}

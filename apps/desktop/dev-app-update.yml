@@ -1,0 +1,4 @@
+provider: github
+owner: Braid
+repo: desktop-app
+updaterCacheDirName: braid-app-updater

@@ -1,0 +1,135 @@
+/* ============================================================
+   DESIGN TOKENS — Braid Electron
+
+   Switch theme: add/remove class "dark" on <html>
+   Components use token classes only: bg-surface, text-fg, etc.
+   ============================================================ */
+
+/* Light theme */
+:root {
+  --bg-page:              #F5F2EE;
+  --bg-surface:           #FFFFFF;
+  --bg-surface-secondary: #F0EDE8;
+  --bg-surface-hover:     #EBE7E2;
+  --bg-surface-active:    #E5E1DC;
+  --bg-surface-elevated:  #FFFFFF;
+  --bg-surface-deep:      #F0EDE8;
+  --bg-brand-subtle:      rgba(200, 103, 74, 0.08);
+  --bg-brand-subtle-hover: rgba(200, 103, 74, 0.14);
+  --bg-overlay:           rgba(0, 0, 0, 0.4);
+
+  --border-default:       #E0DBD5;
+  --border-subtle:        #EAE6E0;
+  --border-strong:        #C8C2BA;
+
+  --text-primary:         #1A1816;
+  --text-secondary:       #6B6560;
+  --text-tertiary:        #9A9490;
+  --text-inverse:         #FFFFFF;
+
+  --accent-brand:         #C8674A;
+  --accent-brand-hover:   #8b4a35;
+
+  --status-success:       #22C55E;
+  --status-warning:       #EAB308;
+  --status-error:         #EF4444;
+}
+
+/* Dark theme */
+:root.dark {
+  --bg-page:              #1e1e1e;   /* right panel / editor area — the "lit" working surface  */
+  --bg-surface:           #141415;   /* sidebar + title bar — darker chrome frames the content */
+  --bg-surface-secondary: #1a1a1b;
+  --bg-surface-hover:     #1f1f20;
+  --bg-surface-active:    #252528;
+  --bg-surface-elevated:  #252526;   /* cards, dropdowns, inputs — sit above the chrome         */
+  --bg-surface-deep:      #0f0f0f;
+  --bg-brand-subtle:      rgba(200, 103, 74, 0.1);
+  --bg-brand-subtle-hover: rgba(200, 103, 74, 0.16);
+  --bg-overlay:           rgba(0, 0, 0, 0.6);
+
+  --border-default:       #2e2e2f;
+  --border-subtle:        #222223;
+  --border-strong:        #555555;
+
+  --text-primary:         #d4d4d4;   /* slightly brighter than before — more readable           */
+  --text-secondary:       #8a8a8a;
+  --text-tertiary:        #525252;
+  --text-inverse:         #141415;
+
+  --accent-brand:         #c8674a;
+  --accent-brand-hover:   #8b4a35;
+
+  --status-success:       #4ec9b0;
+  --status-warning:       #cca700;
+  --status-error:         #f48771;
+}
+
+/* Map tokens to Tailwind utility classes via @theme inline
+   "inline" means utilities reference the CSS var at runtime,
+   enabling live theme switching by toggling .dark on <html>  */
+@theme inline {
+  --color-page:              var(--bg-page);
+  --color-surface:           var(--bg-surface);
+  --color-surface-secondary: var(--bg-surface-secondary);
+  --color-surface-hover:     var(--bg-surface-hover);
+  --color-surface-active:    var(--bg-surface-active);
+  --color-surface-elevated:  var(--bg-surface-elevated);
+  --color-surface-deep:      var(--bg-surface-deep);
+  --color-brand-subtle:      var(--bg-brand-subtle);
+  --color-brand-subtle-hover: var(--bg-brand-subtle-hover);
+
+  --color-border:            var(--border-default);
+  --color-border-subtle:     var(--border-subtle);
+  --color-border-strong:     var(--border-strong);
+
+  --color-fg:                var(--text-primary);
+  --color-fg-secondary:      var(--text-secondary);
+  --color-fg-tertiary:       var(--text-tertiary);
+  --color-fg-inverse:        var(--text-inverse);
+
+  --color-brand:             var(--accent-brand);
+  --color-brand-hover:       var(--accent-brand-hover);
+
+  --color-success:           var(--status-success);
+  --color-warning:           var(--status-warning);
+  --color-error:             var(--status-error);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    font-weight: inherit;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* Pulse animation for running terminal state */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}

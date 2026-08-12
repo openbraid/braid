@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1773947155060,
+      "tag": "0000_petite_sleeper",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1774996739991,
+      "tag": "0001_chilly_romulus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1775595007851,
+      "tag": "0002_glorious_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1786214110547,
+      "tag": "0003_faulty_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1786299601281,
+      "tag": "0004_round_inhumans",
+      "breakpoints": true
+    }
+  ]
+}

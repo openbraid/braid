@@ -1,0 +1,81 @@
+{
+  "name": "braid-terminal",
+  "displayName": "Braid Terminal",
+  "description": "Embedded terminal panels for Braid workspaces",
+  "version": "0.2.0",
+  "publisher": "braid",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onWebviewPanel:braidTerminal"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "braid.newTerminal",
+        "title": "Braid: New Terminal",
+        "icon": "$(add)"
+      },
+      {
+        "command": "braid.renameTerminal",
+        "title": "Rename Terminal"
+      },
+      {
+        "command": "braid.closeTerminal",
+        "title": "Close Terminal"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "braid.newTerminal",
+          "group": "navigation"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "braid.renameTerminal",
+          "when": "activeWebviewPanelId == 'braidTerminal'",
+          "group": "1_braid"
+        },
+        {
+          "command": "braid.closeTerminal",
+          "when": "activeWebviewPanelId == 'braidTerminal'",
+          "group": "1_braid"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "braid.newTerminal",
+        "key": "ctrl+t",
+        "mac": "cmd+t"
+      },
+      {
+        "command": "braid.renameTerminal",
+        "key": "f2",
+        "when": "activeWebviewPanelId == 'braidTerminal'"
+      },
+      {
+        "command": "braid.noop",
+        "mac": "cmd+shift+n"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.93.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "ws": "^8.19.0"
+  }
+}
