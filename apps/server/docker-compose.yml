@@ -1,0 +1,101 @@
+# ─── core-api — self-hosted stack ────────────────────────────────────────────
+#
+#   cp .env.example .env     # then set AUTH_TOKEN and POSTGRES_PASSWORD
+#   docker compose up -d
+#
+# That is the whole default path: an API on http://localhost:3003 and a
+# Postgres beside it, over plain HTTP. No domain, no certificates, no reverse
+# proxy — most people run this on localhost, a LAN box, a Tailscale tailnet, or
+# a platform that already terminates TLS, and in all four cases a proxy here
+# would be dead weight.
+#
+# If you *do* want a public hostname with automatic HTTPS:
+#
+#   DOMAIN=api.example.com docker compose --profile tls up -d
+#
+# See README.md.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-coreapi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-coreapi}
+    volumes:
+      # Named volume, not an anonymous one: an anonymous volume is orphaned by
+      # `docker compose down` and silently replaced with an empty database on
+      # the next `up`. This one survives restarts, rebuilds and `down`, and is
+      # removed only by an explicit `docker compose down -v`.
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # The API runs `prisma migrate deploy` at startup, which fails outright
+      # against a Postgres that is still initialising. Gate on readiness rather
+      # than relying on a restart loop to eventually win the race.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-coreapi} -d ${POSTGRES_DB:-coreapi}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  api:
+    build:
+      # Monorepo root: the npm lockfile lives there and npm cannot install a
+      # workspace member without it. See apps/server/Dockerfile.
+      context: ../..
+      dockerfile: apps/server/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Point at the bundled Postgres by default. Set DATABASE_URL in .env to
+      # use an external/managed database instead — then `postgres` above is
+      # unused and can be left running or removed from the stack.
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-coreapi}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-coreapi}?schema=public}
+      # Only needed on hosted Postgres that fronts the database with a
+      # connection pooler; defaults to DATABASE_URL everywhere else.
+      DIRECT_URL: ${DIRECT_URL:-}
+      PORT: 3003
+      AUTH_MODE: ${AUTH_MODE:-token}
+      AUTH_TOKEN: ${AUTH_TOKEN:-}
+      OIDC_ISSUER: ${OIDC_ISSUER:-}
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    ports:
+      # Bound to every interface so a LAN or tailnet peer can reach it. Set
+      # API_BIND=127.0.0.1 to keep it on the host only.
+      - "${API_BIND:-0.0.0.0}:${API_PORT:-3003}:3003"
+
+  # ─── Optional: HTTPS on a public domain ────────────────────────────────────
+  # Off unless you ask for it: `docker compose --profile tls up -d`.
+  # Requires DOMAIN to resolve to this host and ports 80/443 to be reachable —
+  # Caddy needs both to complete the ACME challenge and to redirect HTTP.
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["tls"]
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # Not marked required (`:?`) even though the tls profile cannot work
+      # without it: Compose interpolates every service before it filters by
+      # profile, so a required variable here would break the default,
+      # Caddy-less `docker compose up` for everyone. If DOMAIN is empty Caddy
+      # exits on startup with a config error — check `docker compose logs caddy`.
+      DOMAIN: ${DOMAIN:-}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Issued certificates and the ACME account key. Without a volume every
+      # restart re-requests certificates and will hit Let's Encrypt rate limits.
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  postgres-data:
+  caddy-data:
+  caddy-config:

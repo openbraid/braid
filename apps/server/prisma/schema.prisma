@@ -1,0 +1,258 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Hosted Postgres (Supabase, Neon, …) serves runtime traffic through a
+  // connection pooler that cannot run DDL. `directUrl` is used by
+  // `prisma migrate` / `prisma db push` only. Self-hosters on plain Postgres
+  // set DIRECT_URL to the same value as DATABASE_URL.
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  // Identity-provider subject. Provider-neutral by design: with AUTH_MODE=oidc
+  // this is the JWT `sub`; with AUTH_MODE=token it is the self-asserted email.
+  // The column keeps its original `workos_id` name so that renaming the field
+  // costs no destructive DROP/ADD migration on existing self-hosted databases.
+  subjectId String   @unique @map("workos_id")
+  email     String   @unique
+  firstName String?  @map("first_name")
+  lastName  String?  @map("last_name")
+  picture   String?
+  provider  String // GoogleOAuth, GitHubOAuth, Password, etc.
+
+  lastLoginAt DateTime @map("last_login_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  createdProjects   Project[]              @relation("ProjectCreator")
+  createdWorkspaces Workspace[]            @relation("WorkspaceCreator")
+  lifecycleStatusChangedWorkspaces Workspace[] @relation("WorkspaceLifecycleStatusChanger")
+  contributions     ProjectContributor[]
+  editedArtifacts        Artifact[]             @relation("ArtifactLastEditor")
+  statusChangedArtifacts Artifact[]             @relation("ArtifactStatusChanger")
+  artifactVersions       ArtifactVersion[]      @relation("ArtifactVersionChanger")
+  activityEvents         ActivityEvent[]        @relation("EventActor")
+
+  @@map("users")
+}
+
+// ─── Project ─────────────────────────────────────────────────────────────────
+
+model Project {
+  id               String  @id @default(uuid())
+  name             String
+  createdBy        String  @map("created_by")
+  artifactsEnabled Boolean @default(true) @map("artifacts_enabled")
+  selectedAgents   String  @default("[]") @map("selected_agents") // JSON array of agent IDs
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  creator           User                     @relation("ProjectCreator", fields: [createdBy], references: [id])
+  repositories      ProjectRepository[]
+  workspaces        Workspace[]
+  contributors      ProjectContributor[]
+  monitoredCommands ProjectMonitoredCommand[]
+  activityEvents    ActivityEvent[]
+
+  @@map("projects")
+}
+
+// ─── Repository ──────────────────────────────────────────────────────────────
+
+model Repository {
+  id        String @id @default(uuid())
+  remoteUrl String @unique @map("remote_url")
+  name      String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  projects       ProjectRepository[]
+  workspaceRepos WorkspaceRepo[]
+
+  @@map("repositories")
+}
+
+// ─── Project ↔ Repository ────────────────────────────────────────────────────
+
+model ProjectRepository {
+  projectId String @map("project_id")
+  repoId    String @map("repo_id")
+
+  project    Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repoId], references: [id])
+
+  @@id([projectId, repoId])
+  @@map("project_repositories")
+}
+
+// ─── Workspace ───────────────────────────────────────────────────────────────
+
+model Workspace {
+  id           String @id @default(uuid())
+  projectId    String @map("project_id")
+  name          String
+  sanitizedName String @map("sanitized_name")
+  branchName    String @map("branch_name")
+  sourceBranch  String @map("source_branch")
+  createdBy    String @map("created_by")
+
+  lifecycleStatus                  String    @default("in_progress") @map("lifecycle_status")
+  lifecycleStatusChangedBy         String?   @map("lifecycle_status_changed_by")
+  lifecycleStatusChangedByFirstName String?  @map("lifecycle_status_changed_by_first_name")
+  lifecycleStatusChangedByLastName  String?  @map("lifecycle_status_changed_by_last_name")
+  lifecycleStatusChangedAt         DateTime? @map("lifecycle_status_changed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  project              Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator              User            @relation("WorkspaceCreator", fields: [createdBy], references: [id])
+  lifecycleStatusChanger User?         @relation("WorkspaceLifecycleStatusChanger", fields: [lifecycleStatusChangedBy], references: [id], onDelete: SetNull)
+  repos             WorkspaceRepo[]
+  sessions          Session[]
+  artifacts         Artifact[]
+  activityEvents    ActivityEvent[]
+
+  @@unique([projectId, name])
+  @@unique([projectId, sanitizedName])
+  @@unique([projectId, branchName])
+  @@map("workspaces")
+}
+
+// ─── Workspace ↔ Repository ─────────────────────────────────────────────────
+
+model WorkspaceRepo {
+  workspaceId  String  @map("workspace_id")
+  repoId       String  @map("repo_id")
+  sourceBranch String? @map("source_branch")
+
+  workspace  Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repoId], references: [id])
+
+  @@id([workspaceId, repoId])
+  @@map("workspace_repos")
+}
+
+// ─── Session ─────────────────────────────────────────────────────────────────
+
+model Session {
+  id          String @id @default(uuid())
+  workspaceId String @map("workspace_id")
+  agentType   String @map("agent_type")
+  sessionId   String @map("session_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ─── Project Contributor ─────────────────────────────────────────────────────
+
+model ProjectContributor {
+  projectId String @map("project_id")
+  userId    String @map("user_id")
+  role      String // 'owner' | 'contributor'
+
+  addedAt DateTime @default(now()) @map("added_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@id([projectId, userId])
+  @@map("project_contributors")
+}
+
+// ─── Artifact ────────────────────────────────────────────────────────────────
+
+model Artifact {
+  id           String  @id @default(uuid())
+  workspaceId  String  @map("workspace_id")
+  kind         String  // REQUIREMENTS, DESIGN, SPEC, QA, RCA, or custom
+  title        String  @default("")
+  status          String    @default("draft") // draft | in_review | approved | update_required | outdated
+  statusChangedBy     String?   @map("status_changed_by")
+  statusChangedByFirstName String? @map("status_changed_by_first_name")
+  statusChangedByLastName  String? @map("status_changed_by_last_name")
+  statusChangedAt     DateTime? @map("status_changed_at")
+  yamlContent  String  @map("yaml_content") @db.Text
+  yjsState     Bytes?  @map("yjs_state")
+  version      Int     @default(1)
+  lastEditedBy String? @map("last_edited_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  workspace     Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  lastEditor    User?            @relation("ArtifactLastEditor", fields: [lastEditedBy], references: [id])
+  statusChanger User?            @relation("ArtifactStatusChanger", fields: [statusChangedBy], references: [id])
+  versions   ArtifactVersion[]
+
+  @@unique([workspaceId, kind])
+  @@map("artifacts")
+}
+
+// ─── Artifact Version ────────────────────────────────────────────────────────
+
+model ArtifactVersion {
+  id          String  @id @default(uuid())
+  artifactId  String  @map("artifact_id")
+  version     Int
+  yamlContent String  @map("yaml_content") @db.Text
+  yjsState    Bytes?  @map("yjs_state")
+  changedBy   String? @map("changed_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  artifact Artifact @relation(fields: [artifactId], references: [id], onDelete: Cascade)
+  changer  User?    @relation("ArtifactVersionChanger", fields: [changedBy], references: [id])
+
+  @@unique([artifactId, version])
+  @@map("artifact_versions")
+}
+
+// ─── Project Monitored Command ───────────────────────────────────────────────
+
+model ProjectMonitoredCommand {
+  id        String @id @default(uuid())
+  projectId String @map("project_id")
+  command   String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, command])
+  @@map("project_monitored_commands")
+}
+
+// ─── Activity Event ─────────────────────────────────────────────────────────
+
+model ActivityEvent {
+  id           String   @id @default(uuid())
+  projectId    String   @map("project_id")
+  workspaceId  String   @map("workspace_id")
+  artifactKind String?  @map("artifact_kind")
+  actorId      String?  @map("actor_id")
+  action       String   // artifact_saved, artifact_status_changed, workspace_created, etc.
+  summary      String   // human-readable: "Saved REQUIREMENTS (v3)"
+  details      Json?    // structured payload, varies by action type
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actor     User?     @relation("EventActor", fields: [actorId], references: [id])
+
+  @@index([projectId, createdAt])
+  @@index([workspaceId, createdAt])
+  @@map("activity_events")
+}

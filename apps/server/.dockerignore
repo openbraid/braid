@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+.env.*
+.git
+.DS_Store
+*.log
+coverage
+test
+spikes
+
+# Deployment files the image itself never needs. Excluded so editing them does
+# not invalidate the build cache.
+docker-compose.yml
+Caddyfile
+README.md

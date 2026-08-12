@@ -1,0 +1,11 @@
+# Used only by the optional `tls` profile:
+#   docker compose --profile tls up -d
+#
+# Caddy obtains and renews a Let's Encrypt certificate for $DOMAIN on its own
+# and redirects HTTP to HTTPS. There is deliberately nothing here about
+# WebSockets: reverse_proxy forwards upgrade requests as-is, so the Yjs
+# collaboration socket at /collaboration/* works without extra directives.
+
+{$DOMAIN} {
+	reverse_proxy api:3003
+}
