@@ -1,0 +1,30 @@
+# Build context for apps/server is the monorepo root, because the npm lockfile
+# lives here and npm will not install a workspace member without it. Everything
+# the server image does not need is excluded — without this the desktop app's
+# node_modules and bundled binaries would be shipped to the daemon on every
+# build.
+
+**/node_modules
+**/dist
+**/out
+**/.git
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+**/.DS_Store
+**/*.tsbuildinfo
+**/.eslintcache
+
+# The desktop app is not part of the server image. Its package.json is copied
+# explicitly in the Dockerfile because npm ci needs every workspace manifest to
+# match the lockfile.
+apps/desktop/**
+!apps/desktop/package.json
+
+apps/server/test
+apps/server/docker-compose.yml
+apps/server/Caddyfile
+apps/server/README.md
+docs
+*.md

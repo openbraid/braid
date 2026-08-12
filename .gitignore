@@ -1,0 +1,54 @@
+# Merged from the two package .gitignores when apps/desktop and apps/server
+# moved under this root. One file covers both workspaces — keep it that way
+# rather than reintroducing per-package files that drift apart.
+#
+# Note on anchoring: a pattern matches at any depth only when it contains NO
+# slash at all (`node_modules`). As soon as a pattern contains a slash anywhere
+# it is anchored to this directory, so `resources/vscode-server/` would only
+# match at the repo root and miss `apps/desktop/resources/vscode-server/`.
+# Multi-segment patterns therefore need an explicit `**/` prefix.
+
+# ── Dependencies and build output ────────────────────────────────────────────
+node_modules
+dist
+out
+*.tsbuildinfo
+electron.vite.config.*.mjs
+
+# apps/server — Prisma client is generated, never committed
+/apps/server/generated/prisma
+
+# ── Large downloaded artifacts (apps/desktop) ────────────────────────────────
+# The VS Code web server is fetched by scripts/download-vscode-server.sh
+# (~670 MB) on the first `npm run dev`. Never commit it.
+**/resources/vscode-server/
+
+# ── Local machine noise ──────────────────────────────────────────────────────
+.DS_Store
+.eslintcache
+*.log*
+.claude/
+
+# ── Raw media ────────────────────────────────────────────────────────────────
+# Screen recordings are tens of megabytes each. Only the final compressed GIF or
+# PNG belongs in docs/assets/ — keep the source recordings outside the repo.
+*.mov
+*.mp4
+
+# ── Secrets ──────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Per-workspace agent context ──────────────────────────────────────────────
+# Braid writes workspace.local.md into the artifact directory and into each
+# agent's rules directory. It names local paths, so it is never committed.
+# `.tracigo/` is the pre-rename artifact directory name; branches created by an
+# older release still carry it, so both names stay ignored.
+**/.braid/workspace.local.md
+**/.tracigo/workspace.local.md
+**/.claude/rules/workspace.local.md
+**/.github/instructions/workspace.local.md
+**/.cursor/rules/workspace.local.md
+**/.clinerules/workspace.local.md
+**/.kiro/steering/workspace.local.md

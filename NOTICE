@@ -1,0 +1,35 @@
+Braid
+Copyright 2026 The Braid Authors
+
+This product includes software developed by The Braid Authors and
+contributors to the Braid project (https://github.com/openbraid).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+--------------------------------------------------------------------------
+Third-party components
+
+Braid bundles and depends on third-party open source software, each
+distributed under its own license. Those licenses are reproduced in the
+distributed packages and in the dependency metadata (package.json and
+package-lock.json) of this repository. Notable bundled components include:
+
+  - Electron (MIT)
+  - whisper.cpp, used for local dictation (MIT)
+
+Braid also uses a web build of Visual Studio Code, downloaded at setup time by
+scripts/download-vscode-server.sh under the terms of whichever build you
+install. It is not part of this repository.
+
+Use of the names, logos, or trademarks of any third party is not granted by
+the Apache License, Version 2.0.

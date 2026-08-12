@@ -1,0 +1,25 @@
+{
+  "name": "braid",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Braid — AI-native software development platform",
+  "homepage": "https://github.com/openbraid/braid",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "//": "The desktop app is what `npm run dev` means at the root — the server is optional and is normally run with docker compose from apps/server. Every script here is a thin delegation; the real definitions live in the workspace package.json files.",
+  "scripts": {
+    "dev": "npm run dev --workspace apps/desktop",
+    "dev:server": "npm run start:dev --workspace apps/server",
+    "build": "npm run build --workspaces --if-present",
+    "build:mac": "npm run build:mac --workspace apps/desktop",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test:run --workspace apps/desktop",
+    "setup": "npm run setup --workspace apps/desktop",
+    "setup:extension": "npm run setup:extension --workspace apps/desktop"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
