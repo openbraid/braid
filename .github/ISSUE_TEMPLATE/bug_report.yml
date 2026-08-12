@@ -1,0 +1,121 @@
+name: Bug report
+description: Something in Braid does not work the way it should
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. The most useful thing you can give us is an
+        exact sequence that reproduces it.
+
+        Please do not report security vulnerabilities here — use GitHub's
+        "Report a vulnerability" flow on this repository instead.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the problem.
+      placeholder: Switching workspaces left the previous VS Code webview visible on top of the new one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Number them. Start from a fresh launch of the app if you can.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the app is affected?
+      options:
+        - Not sure
+        - Projects
+        - Workspaces / worktrees
+        - Embedded VS Code
+        - Terminals / agent status
+        - Agent sessions
+        - Artifacts (.braid YAML)
+        - Agent instruction injection
+        - Setup scripts
+        - Dictation
+        - Team server (experimental)
+        - Build / packaging
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - Local mode (no server configured)
+        - Team mode (self-hosted server)
+    validations:
+      required: true
+
+  - type: input
+    id: braid-version
+    attributes:
+      label: Braid version
+      description: From the About window, or the commit SHA if you are running from source.
+      placeholder: 0.0.1 (commit a1b2c3d)
+    validations:
+      required: true
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version and chip
+      placeholder: macOS 15.3, M2 Pro
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      description: Only needed if you are running from source (`node --version`).
+      placeholder: v22.14.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, errors, or screenshots
+      description: >-
+        Anything from the DevTools console, the terminal running `npm run dev`,
+        or a screen recording. Please redact absolute paths and repo names you
+        do not want public.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I am on macOS with Apple Silicon, the only supported platform.
+          required: true

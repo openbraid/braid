@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# A new push to a PR makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# There is one lockfile, at the repo root — npm workspaces do not support
+# per-package lockfiles. So every job installs from the root and then runs the
+# app's own scripts from the app directory.
+
+jobs:
+  desktop:
+    name: Desktop — typecheck
+    # macOS is the only supported platform, and the native deps
+    # (node-pty, better-sqlite3) are built for it.
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Installs both workspaces. Splitting it per app is not possible from a
+      # single root lockfile without npm reifying the whole tree anyway.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck --workspace apps/desktop
+
+      - name: Test
+        run: npm run test:run --workspace apps/desktop
+
+      # No repo-wide lint step: `npm run lint` currently runs out of memory.
+      # Contributors lint the files they changed (see CONTRIBUTING.md).
+
+  server:
+    name: Server — build
+    # No native deps here; ubuntu is faster and cheaper than macOS.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # A schema that no longer parses fails here with a readable message,
+      # rather than as a confusing type error inside the generated client.
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        working-directory: apps/server
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+        working-directory: apps/server
+
+      - name: Build
+        run: npm run build --workspace apps/server

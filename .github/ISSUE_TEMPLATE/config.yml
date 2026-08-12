@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/openbraid/braid/discussions
+    about: Ask how something works, or float an idea before opening an issue.
+  - name: Agent not detected
+    url: https://github.com/openbraid/braid/discussions/categories/agent-support
+    about: Braid did not recognise your agent, or its status pill looked wrong.

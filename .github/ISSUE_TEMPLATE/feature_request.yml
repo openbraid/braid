@@ -1,0 +1,97 @@
+name: Feature request
+description: Suggest a capability or improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem you hit before the solution you have in mind — the
+        problem is the part we can most usefully discuss.
+
+        For anything large (a new storage backend, a change to the layering, a
+        new workspace tab), please open this issue before writing code.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What were you trying to do, and what got in the way?
+      placeholder: >-
+        I run four workspaces at once and cannot tell from the sidebar which
+        agent has been waiting on me the longest.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to happen
+      description: Your proposed solution, if you have one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Including any workaround you are using today.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Not sure
+        - Projects
+        - Workspaces / worktrees
+        - Embedded VS Code
+        - Terminals / agent status
+        - Agent sessions
+        - Artifacts (.braid YAML)
+        - Agent instruction injection
+        - Setup scripts
+        - Dictation
+        - Team server (experimental)
+        - Build / packaging
+        - Developer experience
+    validations:
+      required: true
+
+  - type: dropdown
+    id: server
+    attributes:
+      label: Does this need the optional team server?
+      description: >-
+        Local mode is the default and supported mode. Features that work without
+        a server are strongly preferred.
+      options:
+        - No — works fully offline in local mode
+        - Yes — inherently needs a server
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: Related AI coding agent
+      description: >-
+        If this is about support for a specific agent, name it and link its
+        docs on instruction files or config.
+      placeholder: Amp — https://…
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I would be willing to work on this myself.
+          required: false
