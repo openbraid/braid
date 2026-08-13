@@ -1,6 +1,6 @@
-# core-api
+# Braid server
 
-The Braid backend: a NestJS + Prisma + PostgreSQL API, plus a WebSocket
+The optional Braid backend: a NestJS + Prisma + PostgreSQL API, plus a WebSocket
 endpoint for real-time collaborative editing.
 
 It is built to be self-hosted. The default setup is one command, runs entirely

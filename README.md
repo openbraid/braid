@@ -6,10 +6,10 @@
 
 **Know which agent is working, which is stuck, and which is done.**
 
-[Quickstart](#quickstart) · [Docs](docs/guide/index.md) · [Architecture](ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md)
+[Install](#install) · [Docs](docs/guide/index.md) · [Architecture](ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon)-lightgrey.svg)](#quickstart)
+[![Platform](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon)-lightgrey.svg)](#install)
 [![Status](https://img.shields.io/badge/status-early-orange.svg)](#status)
 
 <img src="docs/assets/demo.gif" width="900" alt="Two agents running in parallel: starting one workspace's agent, switching to another, and the first still working">
@@ -36,10 +36,18 @@ you, and which has finished.
 
 ---
 
-## Quickstart
+## Install
 
-Braid is a desktop app. There are no packaged releases yet, so for now you run it
-from source:
+**Requirements: macOS on Apple Silicon.** The bundled dictation binary is
+`darwin-arm64` only, so Intel Macs, Windows and Linux are untested today.
+
+### Download
+
+Get the latest `.dmg` from [**Releases**](https://github.com/openbraid/braid/releases/latest),
+open it, and drag Braid to Applications. It is signed and notarized, so it opens
+with a normal double-click.
+
+### Or run from source
 
 ```bash
 git clone https://github.com/openbraid/braid.git && cd braid
@@ -47,23 +55,17 @@ npm install
 npm run dev
 ```
 
-That is the whole setup. **No account, no login, no server, no API key.** Braid
-runs entirely on your machine and works with your network off. Your identity is
+The first `npm run dev` downloads the web build of VS Code that Braid embeds and
+builds the bundled extension; later runs skip both once they are in place. To
+produce your own installable app instead, `npm run build:mac`.
+
+Either way: **no account, no login, no server, no API key.** Braid runs entirely
+on your machine and works with your network off. Your identity is
 `git config user.name` and `user.email` — the same one already on your commits.
 
-The first `npm run dev` downloads the web build of VS Code that Braid embeds and
-builds the bundled extension; later runs skip both once they are in place.
-`npm run build:mac` produces a local `.dmg` if you would rather install it than
-run the dev server — unsigned, so the first launch needs right-click → Open.
-
-**Requirements: macOS on Apple Silicon.** The bundled Whisper dictation binary is
-`darwin-arm64` only, so Intel Macs, Windows and Linux are untested and
-unsupported today.
-
-> **Please don't ship packaged builds yet.** Braid is source-only for now:
-> `npm run dev` downloads a VS Code server onto your own machine under that
-> build's own license. Making it redistributable is the first item in
-> [What's next](#whats-next).
+> Braid embeds a VS Code web server. Running from source downloads it on first
+> run; the packaged app bundles it. We're working on moving to a fully open
+> build — see [What's next](#whats-next).
 
 ---
 
@@ -156,10 +158,14 @@ reads YAML still works on them.
 > **Experimental.** Off by default, absent from a stock install, and not needed
 > for anything above.
 
-A self-hosted NestJS server in this monorepo ([`apps/server/`](apps/server/))
-adds live co-editing of artifacts,
+A self-hosted NestJS server in this monorepo adds live co-editing of artifacts,
 inline comments, presence, and project invites. It is early and unstable. Braid's
 supported default is local mode.
+
+**Setting it up:** [`apps/server/README.md`](apps/server/README.md) — Docker
+quick start, and three shapes depending on who needs to reach it: just you, a
+small team over Tailscale, or a public domain with HTTPS. See also
+[Collaboration](docs/guide/collaboration.md) for what it adds in the app.
 
 Most of what teams want from collaboration already works through git: artifacts
 are files, so review happens in your pull request, history is `git log`, and
@@ -206,15 +212,15 @@ why, rather than failing with a network error.
 
 Roughly in order. Issues and PRs on any of these are welcome.
 
-1. **Switch the embedded editor to [VSCodium](https://vscodium.com)**, so release
-   builds can be published.
-2. **Published release builds.** A signed and notarized `.dmg` so installing does
-   not mean cloning and building.
-3. **Widen test coverage.** The main-process libraries, terminal state machine
+1. **A fully open editor build.** Braid embeds a VS Code web server;
+   [VSCodium](https://vscodium.com) and openvscode-server are the MIT builds of
+   the same upstream source. Getting one of them working end to end is the top
+   item here.
+2. **Widen test coverage.** The main-process libraries, terminal state machine
    and artifact parser are covered; the server and React components are not.
-4. **Beyond Apple Silicon.** Intel Macs, Linux and Windows are untested. The
+3. **Beyond Apple Silicon.** Intel Macs, Linux and Windows are untested. The
    bundled Whisper dictation binary is `darwin-arm64` only.
-5. **Promote a local project to a team server.** IDs are client-generated UUIDs
+4. **Promote a local project to a team server.** IDs are client-generated UUIDs
    in both modes, so this is an upsert rather than a migration — the path exists,
    the button does not.
 
