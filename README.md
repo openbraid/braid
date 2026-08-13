@@ -11,13 +11,9 @@ See all of them from one sidebar.**
 [![Platform](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon)-lightgrey.svg)](#quickstart)
 [![Status](https://img.shields.io/badge/status-early-orange.svg)](#status)
 
-<img src="docs/assets/hero.png" width="900" alt="Braid running four agents in parallel across two projects">
+<img src="docs/assets/demo.gif" width="900" alt="Two agents running in parallel: starting one workspace's agent, switching to another, and the first still working">
 
 </div>
-
-<!-- TODO: replace the hero image above with docs/assets/demo.gif once recorded —
-     15-20s, no audio: start an agent in one workspace, switch to a second while the
-     first keeps running, show the sidebar status pills changing, end on the sidebar. -->
 
 ---
 
@@ -172,6 +168,9 @@ why, rather than failing with a network error.
 ## Screenshots
 
 <table>
+<tr>
+<td colspan="2"><img src="docs/assets/hero.png" alt="Braid sidebar showing several workspaces with agent status pills, beside an embedded VS Code instance"><br><sub><b>One sidebar, every workspace.</b> Each row is its own branch, worktree, editor and terminals. The pill shows what is running, what has gone quiet, and what has finished.</sub></td>
+</tr>
 <tr>
 <td width="50%"><img src="docs/assets/artifacts.png" alt="Artifacts view showing a requirements document rendered from YAML"><br><sub><b>Artifacts.</b> The YAML in <code>.braid/</code>, rendered and editable — with the pipeline from requirements through release notes.</sub></td>
 <td width="50%"><img src="docs/assets/agent_settings.png" alt="Project settings listing supported agents"><br><sub><b>Agents.</b> Pick the agents your team uses. Braid writes instruction files into each one's own rules directory.</sub></td>
