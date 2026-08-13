@@ -2,8 +2,9 @@
 
 # Braid
 
-**Run several AI coding agents in parallel — each in its own branch, worktree, editor and terminal.
-See all of them from one sidebar.**
+### Mission control for your agent swarm
+
+**Know which agent is working, which is stuck, and which is done.**
 
 [Quickstart](#quickstart) · [Docs](docs/guide/index.md) · [Architecture](ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md)
 
@@ -58,6 +59,11 @@ run the dev server — unsigned, so the first launch needs right-click → Open.
 **Requirements: macOS on Apple Silicon.** The bundled Whisper dictation binary is
 `darwin-arm64` only, so Intel Macs, Windows and Linux are untested and
 unsupported today.
+
+> **Please don't ship packaged builds yet.** Braid is source-only for now:
+> `npm run dev` downloads a VS Code server onto your own machine under that
+> build's own license. Making it redistributable is the first item in
+> [What's next](#whats-next).
 
 ---
 
