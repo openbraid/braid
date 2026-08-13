@@ -54,6 +54,13 @@ jobs:
     # No native deps here; ubuntu is faster and cheaper than macOS.
     runs-on: ubuntu-latest
 
+    # The datasource block resolves env("DATABASE_URL") when the schema is
+    # parsed, so `prisma validate` and `prisma generate` fail without it even
+    # though neither one connects. A placeholder is enough, and keeps CI from
+    # needing a real database or a committed .env.
+    env:
+      DATABASE_URL: postgresql://braid:braid@localhost:5432/braid?schema=public
+
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
